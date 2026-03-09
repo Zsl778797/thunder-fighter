@@ -27,20 +27,18 @@ jobs:
       run: |
         export ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk
         mkdir -p $ANDROID_HOME
-        # Download command line tools
         cd $ANDROID_HOME
         wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
         unzip -q commandlinetools-linux-11076708_latest.zip
-        mkdir -p cmdline-tools/latest
-        mv cmdline-tools/* cmdline-tools/latest/ 2>/dev/null || true
-        # Accept licenses
-        yes | cmdline-tools/latest/bin/sdkmanager --licenses || true
-        # Install build-tools
-        cmdline-tools/latest/bin/sdkmanager "build-tools;33.0.0" "platform-tools" "platforms;android-33" || true
+        mkdir -p tools
+        mv cmdline-tools tools/ 2>/dev/null || true
+        yes | tools/cmdline-tools/bin/sdkmanager --licenses || true
+        tools/cmdline-tools/bin/sdkmanager "build-tools;33.0.0" "platform-tools" "platforms;android-33" "ndk;25.2.9519653" || true
     
     - name: Build APK
       run: |
         export ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk
+        export PATH=$PATH:$ANDROID_HOME/tools/cmdline-tools/bin
         buildozer android debug
       timeout-minutes: 60
     
