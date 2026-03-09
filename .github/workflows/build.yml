@@ -26,19 +26,17 @@ jobs:
     - name: Setup Android SDK and accept licenses
       run: |
         export ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk
-        mkdir -p $ANDROID_HOME
+        mkdir -p $ANDROID_HOME/tools/bin
         cd $ANDROID_HOME
         wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
         unzip -q commandlinetools-linux-11076708_latest.zip
-        mkdir -p tools
-        mv cmdline-tools tools/ 2>/dev/null || true
-        yes | tools/cmdline-tools/bin/sdkmanager --licenses || true
-        tools/cmdline-tools/bin/sdkmanager "build-tools;33.0.0" "platform-tools" "platforms;android-33" "ndk;25.2.9519653" || true
+        cp -r cmdline-tools/* $ANDROID_HOME/tools/
+        yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses || true
+        $ANDROID_HOME/tools/bin/sdkmanager "build-tools;33.0.0" "platform-tools" "platforms;android-33" "ndk;25.2.9519653" || true
     
     - name: Build APK
       run: |
         export ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk
-        export PATH=$PATH:$ANDROID_HOME/tools/cmdline-tools/bin
         buildozer android debug
       timeout-minutes: 60
     
