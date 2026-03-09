@@ -31,8 +31,9 @@ jobs:
         wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
         unzip -q commandlinetools-linux-11076708_latest.zip
         cp -r cmdline-tools/* $ANDROID_HOME/tools/
-        yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses || true
-        $ANDROID_HOME/tools/bin/sdkmanager "build-tools;33.0.0" "platform-tools" "platforms;android-33" "ndk;25.2.9519653" || true
+        # Force accept all licenses
+        for i in {1..5}; do yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses && break || sleep 2; done || true
+        $ANDROID_HOME/tools/bin/sdkmanager "build-tools;33.0.0" "platform-tools" "platforms;android-33" "ndk;25.2.9519653"
     
     - name: Build APK
       run: |
